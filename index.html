@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Login</title>
+</head>
+<body>
+    Email: <input id="email" type="email" placeholder="email@domain.com" /> <br/>
+    Password: <input id="password" type="password" placeholder="password" /> <br/>
+    <button id="loginButton">Login</button>
+    <button id="registerButton">Register</button>
+    <br/>
+    Message: <p id="status"></p>
+
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            var url = "http://localhost:8888/login/auth.php";
+            
+            $("#loginButton").click(function(){
+                var email= $.trim($("#email").val());
+                var password= $.trim($("#password").val());
+
+                $("#status").text("Authenticating...");
+                var loginString ="email="+email+"&password="+password+"&login=";
+                $.ajax({
+                    type: "POST",crossDomain: true, cache: false,
+                    url: url,
+                    data: loginString,
+                    success: function(data){
+                        if(data == "success") {
+                            $("#status").text("Login Success..!");
+                            localStorage.loginstatus = "true";
+                            window.location.href = "index.html";
+                        }
+                        else if(data == "error")
+                        {
+                            $("#status").text("Login Failed..!");
+                        }
+                    }
+                });
+            });
+
+            $("#registerButton").click(function(){
+                var email= $.trim($("#email").val());
+                var password= $.trim($("#password").val());
+
+                $("#status").text("Creating New Account...");
+                var dataString="email="+email+"&password="+password+"&register=";
+                $.ajax({
+                    type: "POST",crossDomain: true, cache: false,
+                    url: url,
+                    data: dataString,
+                    success: function(data){
+                        if(data == "success")
+                            $("#status").text("Registered success");
+                        else if( data == "exist")
+                            $("#status").text("Account is already there");
+                        else if(data == "error")
+                            $("#status").text("Register Failed");
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
